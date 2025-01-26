@@ -9,11 +9,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-               git branch: 'main', changelog: false, poll: false, url: 'https://github.com/SaiVishnu97/github-actions-solar-system.git'
-            }
-        }
         stage('Dependency installation'){
             steps{
                 sh 'npm install'

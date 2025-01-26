@@ -54,14 +54,16 @@ pipeline {
                 }
                 stage("Build Docker image")
                 {
-                    script{
-                        steps{
+                  
+                    steps{
+                            script{
                                 withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                                 sh """docker build --build-arg mongousername=$MONGO_USERNAME --build-arg \
                                 mongopassword=$MONGO_PASSWORD -t solar-system-app:$GIT_COMMIT ."""
                             }
                         }
                     }
+                    
                 }
         //     post {
         //         always {

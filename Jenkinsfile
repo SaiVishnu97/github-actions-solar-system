@@ -52,6 +52,15 @@ pipeline {
                  }
             }
                 }
+                stage("Build Docker image")
+                {
+                    steps{
+                            withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                            sh """docker build --build-arg mongousername=$MONGO_USERNAME --build-arg \
+                            mongopassword=$MONGO_PASSWORD -t solar-system-app:$GITCOMMIT ."""
+                        }
+                    }
+                }
         //     post {
         //         always {
         //             echo 'Archiving coverage reports...'

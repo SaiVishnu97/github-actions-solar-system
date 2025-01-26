@@ -7,10 +7,11 @@ COPY package*.json /usr/app/
 RUN npm install
 
 COPY . .
-
+ARG mongousername
+ARG mongopassword
 ENV MONGO_URI=uriPlaceholder
-ENV MONGO_USERNAME=usernamePlaceholder
-ENV MONGO_PASSWORD=passwordPlaceholder
+ENV MONGO_USERNAME=$mongousername
+ENV MONGO_PASSWORD=$mongopassword
 
 EXPOSE 3000
 

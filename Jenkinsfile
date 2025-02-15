@@ -65,6 +65,21 @@ pipeline {
                     }
                     
                 }
+                stage("Image vulnerability scanning")
+                {
+                     steps{
+                        
+                     sh """trivy image --format json --severity HIGH,MEDIUM,LOW  \
+                     --ignore-unfixed --exit-code 0 \
+                     -o low-medium-high-vulnerabilities.json \
+                      solar-system-app:c47a6e8700573266db0f7eeba8f5c1826c4583a9 """
+                     }
+                }
+                stage ("Push the docker image"){
+                    steps{
+                        echo "Will see next"
+                    }
+                }
         //     post {
         //         always {
         //             echo 'Archiving coverage reports...'

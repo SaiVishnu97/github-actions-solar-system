@@ -101,7 +101,7 @@ sudo ./aws/install
                         sshagent(['webserversshkey']) {
     // some block
 
-                        sh''' ssh -o StrictHostKeyChecking=no ubuntu@52.70.192.58 <<EOF
+                        sh""" ssh -o StrictHostKeyChecking=no ubuntu@52.70.192.58 <<EOF
                             export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
                             export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
                             export AWS_DEFAULT_REGION=us-east-1
@@ -119,7 +119,7 @@ sudo ./aws/install
 
                                     echo "Deployment complete!"
                                     EOF                          
-                                    '''
+                                    """
                     }
                     }
                     }

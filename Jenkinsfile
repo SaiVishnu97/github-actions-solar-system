@@ -9,7 +9,8 @@ pipeline {
     }
 environment {
         AWS_REGION = 'us-east-1'  // Change to your region
-        ECR_REPO = '471112631424.dkr.ecr.us-east-1.amazonaws.com/solar-system'
+        AWS_ACCOUNT = '905418155092.dkr.ecr.us-east-1.amazonaws.com'
+        ECR_REPO = '905418155092.dkr.ecr.us-east-1.amazonaws.com/solar-system'
         IMAGE_TAG = 'latest'
     }
     stages {
@@ -83,7 +84,7 @@ environment {
                     steps{
                         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
-                            sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 471112631424.dkr.ecr.us-east-1.amazonaws.com"
+                            sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT"
                             sh "docker image tag solar-system-app:$GIT_COMMIT $ECR_REPO:$IMAGE_TAG"
                             sh "docker image push $ECR_REPO:$IMAGE_TAG"
                             

@@ -12,6 +12,8 @@ environment {
         AWS_ACCOUNT = '905418155092.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPO = '905418155092.dkr.ecr.us-east-1.amazonaws.com/solar-system'
         IMAGE_TAG = 'latest'
+        MONGO_USERNAME = credentials('mongodb-creds_USR')
+        MONGO_PASSWORD = credentials('mongodb-creds_USR')
     }
     stages {
         stage('Dependency installation'){
@@ -61,12 +63,12 @@ environment {
                 {
                   
                     steps{
-                            script{
+                            
                                 withCredentials([usernamePassword(credentialsId: 'mongodb-creds', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
                                 sh """docker build --build-arg mongousername=$MONGO_USERNAME --build-arg \
                                 mongopassword=$MONGO_PASSWORD -t solar-system-app:$GIT_COMMIT ."""
                             }
-                        }
+                        
                     }
                     
                 }
@@ -89,6 +91,30 @@ environment {
                             sh "docker image push $ECR_REPO:$IMAGE_TAG"
                             
     }
+                    }
+                }
+                stage("Deploy the application onto an ec2 instance"){
+                    steps{
+                        sshagent(['webserversshkey']) {
+    // some block
+
+                        sh''' ssh -o StrictHostKeyChecking=no ubuntu@52.70.192.58 <<EOF
+                                    {echo "Checking Docker..."
+                                    if ! command -v docker &> /dev/null; then
+                                        echo "Docker not found! Exiting..."
+                                        exit 1
+                                    fi
+
+                                    echo "Stopping existing container if it exists..."
+                                    docker ps -a | grep -i solar-system && docker container stop solar-system && docker container rm solar-system
+
+                                    echo "Running new container..."
+                                    docker container run -d --name solar-system -p 3000:3000 \$ECR_REPO:\$IMAGE_TAG
+
+                                    echo "Deployment complete!"
+                                    EOF                          
+                                    '''
+                    }
                     }
                 }
         //     post {

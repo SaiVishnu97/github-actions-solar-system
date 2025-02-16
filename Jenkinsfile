@@ -11,7 +11,9 @@ environment {
         AWS_REGION = 'us-east-1'  // Change to your region
         AWS_ACCOUNT = '905418155092.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPO = '905418155092.dkr.ecr.us-east-1.amazonaws.com/solar-system'
-        IMAGE_TAG = 'latest'
+        IMAGE_TAG = 'latest'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
     }
     stages {
@@ -94,11 +96,16 @@ environment {
                 }
                 stage("Deploy the application onto an ec2 instance"){
                     steps{
+                        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+
                         sshagent(['webserversshkey']) {
     // some block
 
                         sh''' ssh -o StrictHostKeyChecking=no ubuntu@52.70.192.58 <<EOF
-                                    {echo "Checking Docker..."
+                            export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                            export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                            export AWS_DEFAULT_REGION=us-east-1
+                                    echo "Checking Docker..."
                                     if ! command -v docker &> /dev/null; then
                                         echo "Docker not found! Exiting..."
                                         exit 1
@@ -113,6 +120,7 @@ environment {
                                     echo "Deployment complete!"
                                     EOF                          
                                     '''
+                    }
                     }
                     }
                 }

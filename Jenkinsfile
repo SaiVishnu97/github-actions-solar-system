@@ -12,8 +12,7 @@ environment {
         AWS_ACCOUNT = '905418155092.dkr.ecr.us-east-1.amazonaws.com'
         ECR_REPO = '905418155092.dkr.ecr.us-east-1.amazonaws.com/solar-system'
         IMAGE_TAG = 'latest'
-        MONGO_USERNAME = credentials('mongodb-creds_USR')
-        MONGO_PASSWORD = credentials('mongodb-creds_USR')
+
     }
     stages {
         stage('Dependency installation'){

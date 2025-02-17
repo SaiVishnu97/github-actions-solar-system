@@ -97,7 +97,6 @@ environment {
                 stage("Deploy the application onto an ec2 instance"){
                     steps{
                         script{
-                                def file = new File("deploy.sh")  // Create the file object
                 
                                 def content = """\
                                 #!/usr/bin/env bash
@@ -121,7 +120,7 @@ environment {
                                 echo "Deployment complete!"
                                 """.stripIndent() + "\n"  // Ensure correct indentation and newline at the end
                                 
-                                file.text = content
+                                writeFile file: 'deploy.sh', text: content
                                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'a2a451d0-e647-4e4c-9f3a-2cf4e64a2547', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
                                 sshagent(['webserversshkey']) {

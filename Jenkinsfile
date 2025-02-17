@@ -127,7 +127,7 @@ environment {
 
                                 sh "scp solar-system.tar.gz deploy.sh ubuntu@54.227.41.252:/home/ubuntu"
                                 
-                                sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 'export ECR_REPO=${ECR_REPO} IMAGE_TAG=${IMAGE_TAG} && bash deploy.sh'"""
+                                sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 'ECR_REPO=${ECR_REPO} IMAGE_TAG=${IMAGE_TAG} && bash deploy.sh'"""
                     }
                     }
                     }

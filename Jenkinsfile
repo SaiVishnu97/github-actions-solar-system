@@ -100,7 +100,7 @@ environment {
 
                         sshagent(['webserversshkey']) {
     // some block       
-                        sh "scp $ECR_REPO.tar.gz ubuntu@54.227.41.252:/home/ubuntu"
+                        sh "scp solar-system.tar.gz ubuntu@54.227.41.252:/home/ubuntu"
 
                         sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<EOF
                                     echo "Decompressing image"

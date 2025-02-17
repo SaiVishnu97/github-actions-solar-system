@@ -97,32 +97,36 @@ environment {
                 stage("Deploy the application onto an ec2 instance"){
                     steps{
                         script{
+                            def file = new File("deploy.sh")  // Create the file object
+
+                            def content = """\
+                            #!/usr/bin/env bash
+                            echo "Decompressing image"
+                            gunzip solar-system.tar.gz
+                            docker image load -i solar-system.tar
+                            echo "Checking Docker..."
+                            if ! command -v docker &> /dev/null; then
+                                echo "Docker not found! Exiting..."
+                                exit 1
+                            fi
+
+                            echo "Stopping existing container if it exists..."
+                            docker ps -a | grep -i solar-system && docker container stop solar-system && docker container rm solar-system
+
+                            echo "Running new container..."
+                            docker image ls
+                            docker container run -d --name solar-system -p 3000:3000 ${ECR_REPO}:${IMAGE_TAG}
+
+                            echo "Deployment complete!"
+                            """
+                            file.text=content
                         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'a2a451d0-e647-4e4c-9f3a-2cf4e64a2547', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
                         sshagent(['webserversshkey']) {
     // some block       
-                        sh "scp solar-system.tar.gz ubuntu@54.227.41.252:/home/ubuntu"
-
-                        sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<-EOF
-                                    echo "Decompressing image"
-                                    gunzip solar-system.tar.gz
-                                    docker image load -i solar-system.tar
-                                    echo "Checking Docker..."
-                                    if ! command -v docker &> /dev/null; then
-                                        echo "Docker not found! Exiting..."
-                                        exit 1
-                                    fi
-
-                                    echo "Stopping existing container if it exists..."
-                                    docker ps -a | grep -i solar-system && docker container stop solar-system && docker container rm solar-system
-
-                                    echo "Running new container..."
-                                    docker image ls
-                                    docker container run -d --name solar-system -p 3000:3000 ${ECR_REPO}:${IMAGE_TAG}
-
-                                    echo "Deployment complete!"
-                                EOF                          
-                                    """
+                        sh "scp solar-system.tar.gz deploy.sh ubuntu@54.227.41.252:/home/ubuntu"
+                        
+                        sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 'bash deploy.sh'"""
                     }
                     }
                     }

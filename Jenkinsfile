@@ -87,9 +87,9 @@ environment {
 
                             sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT"
                             sh "docker image tag solar-system-app:$GIT_COMMIT $ECR_REPO:$IMAGE_TAG"
-                            sh "docker image push $ECR_REPO:$IMAGE_TAG"
-                            sh "docker image save -o $ECR_REPO.tar $ECR_REPO:$IMAGE_TAG"
-                            sh "gzip $ECR_REPO.tar"
+                            sh "docker image push \$ECR_REPO:$IMAGE_TAG"
+                            sh "docker image save -o \$ECR_REPO.tar $ECR_REPO:$IMAGE_TAG"
+                            sh "gzip \$ECR_REPO.tar"
     }
                     }
                 }

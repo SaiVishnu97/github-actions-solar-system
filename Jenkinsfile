@@ -103,7 +103,7 @@ environment {
     // some block       
                         sh "scp solar-system.tar.gz ubuntu@54.227.41.252:/home/ubuntu"
 
-                        sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<EOF
+                        sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<-EOF
                                     echo "Decompressing image"
                                     gunzip solar-system.tar.gz
                                     docker image load -i solar-system.tar
@@ -118,10 +118,10 @@ environment {
 
                                     echo "Running new container..."
                                     docker image ls
-                                    docker container run -d --name solar-system -p 3000:3000 \$ECR_REPO:\$IMAGE_TAG
+                                    docker container run -d --name solar-system -p 3000:3000 ${ECR_REPO}:${IMAGE_TAG}
 
                                     echo "Deployment complete!"
-                                    EOF                          
+                                EOF                          
                                     """
                     }
                     }

@@ -88,8 +88,8 @@ environment {
                             sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT"
                             sh "docker image tag solar-system-app:$GIT_COMMIT $ECR_REPO:$IMAGE_TAG"
                             sh "docker image push \$ECR_REPO:$IMAGE_TAG"
-                            sh "docker image save -o \$ECR_REPO.tar $ECR_REPO:$IMAGE_TAG"
-                            sh "gzip \$ECR_REPO.tar"
+                            sh "docker image save -o solar-system.tar $ECR_REPO:$IMAGE_TAG"
+                            sh "gzip solar-system.tar"
     }
                     }
                 }
@@ -104,8 +104,8 @@ environment {
 
                         sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<EOF
                                     echo "Decompressing image"
-                                    gunzip \$ECR_REPO.tar.gz
-                                    docker image load -i \$ECR_REPO.tar
+                                    gunzip solar-system.tar.gz
+                                    docker image load -i solar-system.tar
                                     echo "Checking Docker..."
                                     if ! command -v docker &> /dev/null; then
                                         echo "Docker not found! Exiting..."

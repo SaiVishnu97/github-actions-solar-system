@@ -88,21 +88,24 @@ environment {
                             sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT"
                             sh "docker image tag solar-system-app:$GIT_COMMIT $ECR_REPO:$IMAGE_TAG"
                             sh "docker image push $ECR_REPO:$IMAGE_TAG"
-                            
+                            sh "docker image save -o $ECR_REPO.tar $ECR_REPO:$IMAGE_TAG"
+                            sh "gzip $ECR_REPO.tar"
     }
                     }
                 }
                 stage("Deploy the application onto an ec2 instance"){
                     steps{
+                        script{
                         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'a2a451d0-e647-4e4c-9f3a-2cf4e64a2547', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
 
                         sshagent(['webserversshkey']) {
-    // some block
+    // some block       
+                        sh "scp $ECR_REPO.tar.gz ubuntu@54.227.41.252:/home/ubuntu"
 
                         sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 <<EOF
-                            export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-                            export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-                            export AWS_DEFAULT_REGION=us-east-1
+                                    echo "Decompressing image"
+                                    gunzip \$ECR_REPO.tar.gz
+                                    docker image load -i \$ECR_REPO.tar
                                     echo "Checking Docker..."
                                     if ! command -v docker &> /dev/null; then
                                         echo "Docker not found! Exiting..."
@@ -113,11 +116,13 @@ environment {
                                     docker ps -a | grep -i solar-system && docker container stop solar-system && docker container rm solar-system
 
                                     echo "Running new container..."
+                                    docker image ls
                                     docker container run -d --name solar-system -p 3000:3000 \$ECR_REPO:\$IMAGE_TAG
 
                                     echo "Deployment complete!"
                                     EOF                          
                                     """
+                    }
                     }
                     }
                     }

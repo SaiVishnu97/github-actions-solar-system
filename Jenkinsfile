@@ -89,6 +89,7 @@ environment {
                             sh "docker image tag solar-system-app:$GIT_COMMIT $ECR_REPO:$IMAGE_TAG"
                             sh "docker image push \$ECR_REPO:$IMAGE_TAG"
                             sh "docker image save -o solar-system.tar $ECR_REPO:$IMAGE_TAG"
+                            sh "rm solar-system.tar || true"
                             sh "gzip solar-system.tar"
     }
                     }

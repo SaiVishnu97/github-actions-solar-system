@@ -9,8 +9,8 @@ pipeline {
     }
 environment {
         AWS_REGION = 'us-east-1'  // Change to your region
-        AWS_ACCOUNT = '730335427659.dkr.ecr.us-east-1.amazonaws.com'
-        ECR_REPO = '730335427659.dkr.ecr.us-east-1.amazonaws.com/solar-system'
+        AWS_ACCOUNT = '891377316340.dkr.ecr.us-east-1.amazonaws.com'
+        ECR_REPO = '891377316340.dkr.ecr.us-east-1.amazonaws.com/solar-system'
         IMAGE_TAG = 'latest'
 
     }
@@ -125,9 +125,9 @@ environment {
 
                                 sshagent(['webserversshkey']) {
 
-                                sh "scp solar-system.tar.gz deploy.sh ubuntu@54.227.41.252:/home/ubuntu"
+                                sh "scp solar-system.tar.gz deploy.sh ubuntu@204.236.200.135:/home/ubuntu"
                                 
-                                sh""" ssh -o StrictHostKeyChecking=no ubuntu@54.227.41.252 'ECR_REPO=${ECR_REPO} IMAGE_TAG=${IMAGE_TAG} && bash deploy.sh'"""
+                                sh""" ssh -o StrictHostKeyChecking=no ubuntu@204.236.200.135 'ECR_REPO=${ECR_REPO} IMAGE_TAG=${IMAGE_TAG} && bash deploy.sh'"""
                     }
                     }
                     }

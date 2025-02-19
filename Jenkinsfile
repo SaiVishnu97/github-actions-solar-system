@@ -125,7 +125,7 @@ environment {
 
                                 sshagent(['webserversshkey']) {
 
-                                sh "scp solar-system.tar.gz deploy.sh ubuntu@204.236.200.135:/home/ubuntu"
+                                sh "scp -o StrictHostKeyChecking=no solar-system.tar.gz deploy.sh ubuntu@204.236.200.135:/home/ubuntu"
                                 
                                 sh""" ssh -o StrictHostKeyChecking=no ubuntu@204.236.200.135 'ECR_REPO=${ECR_REPO} IMAGE_TAG=${IMAGE_TAG} && bash deploy.sh'"""
                     }
